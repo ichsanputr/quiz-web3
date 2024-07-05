@@ -9,6 +9,7 @@ import AnswerList from "./components/AnswerList";
 import Question from "./components/Question";
 import ResultPage from "./components/ResultPage";
 import Loader from "./components/Loader";
+import Header from "./components/Header";
 import abi from "./contract/abi";
 
 const api_url = "https://the-trivia-api.com/api/questions?limit=1";
@@ -152,14 +153,7 @@ const Quiz = () => {
 	return (
 		<div className="min-h-screen h-full bg-primary text-slate-800 dark:bg-accent dark:text-slate-100 items-center justify-center p-3">
 			<Toaster />
-			<div className="flex justify-between px-2 md:px-6 py-2">
-				<h1 className="text-slate-700 text-xl font-semibold dark:bg-primary dark:text-accent">Web3 Quiz</h1>
-				<div>
-					<button onClick={connectMetamask} className="bg-accent text-slate-100 text-sm px-6 py-2 rounded-full float-right flex items-center gap-2">
-						{accountDisplay}
-					</button>
-				</div>
-			</div>
+			<Header account={accountDisplay} connectMetamask={connectMetamask} />
 			<div className="w-full md:px-0 px-3 justify-center h-full mt-12 flex items-center">
 				{quizzes.length === 0 || isloading ? (
 					<Loader />
@@ -172,7 +166,6 @@ const Quiz = () => {
 						claimedToken={hasClaimed}
 					/>
 				) : (
-
 					<div className="w-full md:max-w-lg">
 
 						{
