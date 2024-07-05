@@ -153,14 +153,14 @@ const Quiz = () => {
 
 	// computed for account display
 	const accountDisplay = useMemo(() => {
-		return account && balance != 0 ? balance + ' QT' + ' | ' + account.substring(0, 5) + '...' + account.slice(-5) : 'Connect Metamask'
+		return account.length > 0 && balance > 0 ? balance + ' QT' + ' | ' + account.substring(0, 5) + '...' + account.slice(-5) : 'Connect Metamask'
 	}, [account, recomputed])
 
 	function logout(){
-		setAccount(null)
+		setAccount('')
 		setBalance(null)
 
-		localStorage.setItem('address', null)
+		localStorage.setItem('address', '')
 		localStorage.setItem('balance', null)
 	}
 
