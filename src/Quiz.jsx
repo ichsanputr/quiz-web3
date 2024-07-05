@@ -24,8 +24,9 @@ const Quiz = () => {
 	const [loadingTransfer, setLoadingTransfer] = useState(false)
 	const [hasClaimed, setHasClaimed] = useState(false)
 
-	const [account, setAccount] = useState(localStorage.getItem('address') )
-	const [balance, setBalance] = useState(localStorage.getItem('balance') )
+	const [account, setAccount] = useState(localStorage.getItem('address'))
+	const [balance, setBalance] = useState(localStorage.getItem('balance') ?? 0)
+	const [recomputed, setRecomputed] = useState(0)
 
 	const currentQuiz = quizzes.length > 0 && quizzes[quizNo]
 	const correctAnswer = currentQuiz?.correctAnswer
@@ -77,6 +78,7 @@ const Quiz = () => {
 			return
 		}
 
+		setHasClaimed(false)
 		setIsloading(true);
 		setScore(0);
 		setChoice("");
@@ -106,6 +108,7 @@ const Quiz = () => {
 		await getBalance(accounts[0])
 
 		localStorage.setItem('address', accounts[0])
+		setAccount(accounts[0])
 
 		setLoadingTransfer(true)
 
@@ -116,6 +119,8 @@ const Quiz = () => {
 				setLoadingTransfer(false)
 				toast.success('Token added to your account!')
 				await getBalance(accounts[0])
+
+				setRecomputed((state) => state += 1)
 
 				// disable claim token again
 				setHasClaimed(true)
@@ -143,17 +148,26 @@ const Quiz = () => {
 		localStorage.setItem('address', accounts[0])
 
 		await getBalance(accounts[0])
+		setAccount(accounts[0])
 	}
 
 	// computed for account display
 	const accountDisplay = useMemo(() => {
-		return account ? balance + ' QT' + ' | ' + account.substring(0, 5) + '...' + account.slice(-5) : 'Connect Metamask'
-	}, [account, balance])
+		return account && balance != 0 ? balance + ' QT' + ' | ' + account.substring(0, 5) + '...' + account.slice(-5) : 'Connect Metamask'
+	}, [account, recomputed])
+
+	function logout(){
+		setAccount(null)
+		setBalance(null)
+
+		localStorage.setItem('address', null)
+		localStorage.setItem('balance', null)
+	}
 
 	return (
 		<div className="min-h-screen h-full bg-primary text-slate-800 dark:bg-accent dark:text-slate-100 items-center justify-center p-3">
 			<Toaster />
-			<Header account={accountDisplay} connectMetamask={connectMetamask} />
+			<Header account={accountDisplay} connectMetamask={connectMetamask} logout={logout} />
 			<div className="w-full md:px-0 px-3 justify-center h-full mt-12 flex items-center">
 				{quizzes.length === 0 || isloading ? (
 					<Loader />
